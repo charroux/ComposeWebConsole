@@ -23,6 +23,19 @@ var ComposeProgramService = (function () {
             .then(function (response) { return response.json(); })
             .catch(this.handleError);
     };
+    ComposeProgramService.prototype.saveProgram = function (composeProgram) {
+        return this.put(composeProgram);
+    };
+    ComposeProgramService.prototype.put = function (composeProgram) {
+        var headers = new http_1.Headers();
+        headers.append('Content-Type', 'application/json');
+        var url = "" + this.composeUrl;
+        return this.http
+            .put(url, JSON.stringify(composeProgram), { headers: headers })
+            .toPromise()
+            .then(function () { return composeProgram; })
+            .catch(this.handleError);
+    };
     ComposeProgramService.prototype.handleError = function (error) {
         console.error('An error occurred', error);
         return Promise.reject(error.message || error);

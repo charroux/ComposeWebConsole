@@ -20,6 +20,32 @@ export class ComposeProgramService {
 		.catch(this.handleError);
 	}
 
+	saveProgram(composeProgram: ComposeProgram): Promise<ComposeProgram>  {
+
+		return this.put(composeProgram);
+    
+	}
+
+	private put(composeProgram: ComposeProgram) {
+
+		let headers = new Headers();
+    
+		headers.append('Content-Type', 'application/json');
+
+    
+		let url = `${this.composeUrl}`;
+
+    
+		return this.http
+.put(url, JSON.stringify(composeProgram), {headers: headers})
+
+		.toPromise()
+		.then(() => composeProgram)
+               
+		.catch(this.handleError);
+  
+	}
+
 	private handleError(error: any) {
     		console.error('An error occurred', error);
     		return Promise.reject(error.message || error);

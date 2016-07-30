@@ -14,11 +14,9 @@ import './rxjs-extensions';
 		<label>program name: </label>
 		<input [(ngModel)]="composeProgram.programName" placeholder="programName">
 	</div>
-	<h2>{{composeProgram.programName}}:</h2>
 	<div>
 		<textarea [(ngModel)]="composeProgram.program"></textarea>
 	</div>
-	{{composeProgram.program}}
 	<button (click)="launchProgram()">Launch program</button>
 	`,
 
@@ -37,7 +35,7 @@ export class AppComponent implements OnInit{
 
 	launchProgram() {
     
-		console.error('launchProgram');		
+		this.composeProgramService.saveProgram(this.composeProgram);
 	}
 
 	ngOnInit() {
