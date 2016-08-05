@@ -20,10 +20,30 @@ var AppComponent = (function () {
     }
     AppComponent.prototype.getProgram = function () {
         var _this = this;
-        this.composeProgramService.getProgram().then(function (composeProg) { return _this.composeProgram = composeProg; });
+        this.composeProgramService
+            .getProgram()
+            .then(function (composeProg) { return _this.composeProgram = composeProg; });
     };
     AppComponent.prototype.launchProgram = function () {
-        this.composeProgramService.saveProgram(this.composeProgram);
+        var _this = this;
+        this.serviceResponse = "waiting...";
+        this.composeProgramService
+            .saveProgram(this.composeProgram)
+            .then(function (result) { return _this.serviceResponse = result; })
+            .catch(function (error) { return _this.serviceResponse = error; });
+    };
+    AppComponent.prototype.getProgramStatus = function () {
+        var _this = this;
+        this.composeProgramService
+            .getProgramStatus()
+            .then(function (result) { return _this.serviceResponse = result; });
+    };
+    AppComponent.prototype.stopProgram = function () {
+        var _this = this;
+        this.composeProgramService
+            .stopProgram()
+            .then(function (result) { return _this.serviceResponse = result; })
+            .catch(function (error) { return _this.serviceResponse = error; });
     };
     AppComponent.prototype.ngOnInit = function () {
         this.getProgram();
@@ -31,7 +51,7 @@ var AppComponent = (function () {
     AppComponent = __decorate([
         core_1.Component({
             selector: 'my-app',
-            template: " \n\t<h1>{{title}}</h1>\n\t<div>\n\t\t<label>program name: </label>\n\t\t<input [(ngModel)]=\"composeProgram.programName\" placeholder=\"programName\">\n\t</div>\n\t<div>\n\t\t<textarea [(ngModel)]=\"composeProgram.program\"></textarea>\n\t</div>\n\t<button (click)=\"launchProgram()\">Launch program</button>\n\t",
+            template: " \n\t<h1>{{title}}</h1>\n\t<div>\n\t\t<label>program name (.groovy): </label>\n\t\t<input [(ngModel)]=\"composeProgram.programName\" placeholder=\".groovy\">\n\t</div>\n\t<div>\n\t\t<textarea [(ngModel)]=\"composeProgram.program\" placeholder=\"compute code with data\"></textarea>\n\t</div>\n\tprogram configuration:\n\t<div>\n\t\t<textarea [(ngModel)]=\"composeProgram.configuration\"></textarea>\n\t</div>\n\t<button (click)=\"launchProgram()\">Launch program</button>\n\t<button (click)=\"getProgramStatus()\">Get Program Status</button>\n\t<button (click)=\"stopProgram()\">Stop program</button>\t\t\n\t<div>\n\t\t<textarea [(ngModel)]=\"serviceResponse\" readonly></textarea>\n\t</div>\n\t",
             providers: [composeProgram_service_1.ComposeProgramService]
         }), 
         __metadata('design:paramtypes', [composeProgram_service_1.ComposeProgramService])

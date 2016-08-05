@@ -8,19 +8,45 @@ import { ComposeProgram } from './composeProgram';
 @Injectable()
 export class ComposeProgramService {
 
-	private composeUrl = 'http://localhost:8080/compose';  // URL to web api
+	private composeUrl = 'http://localhost:4000/compose';  // URL to web api
+	private statusURL = this.composeUrl + '/status';
+
+	private errorMessage = 'err';
 
 	constructor(private http: Http) { }
 
 	getProgram(){
-		//console.error('==============================');
 		return this.http.get(this.composeUrl)
               	.toPromise()
                	.then(response => response.json() as ComposeProgram )
 		.catch(this.handleError);
 	}
 
-	saveProgram(composeProgram: ComposeProgram): Promise<ComposeProgram>  {
+	getProgramStatus(){
+		return this.http.get(this.statusURL)
+              	.toPromise()
+               	.then(response => response.text())
+		.catch(this.handleError);
+	}
+
+	stopProgram(){
+		let headers = new Headers();
+    
+		headers.append('Content-Type', 'application/json');
+
+    
+		let url = `${this.statusURL}`;
+
+    
+		return this.http
+.put(url, "azerty", {headers: headers})
+
+		.toPromise()
+		.then(response => response.text())              
+		.catch(response => Promise.reject(new Error(response._body + ' ' + response.status + ' ' + response.statusText)));
+	}
+
+	saveProgram(composeProgram: ComposeProgram)  {
 
 		return this.put(composeProgram);
     
@@ -40,15 +66,14 @@ export class ComposeProgramService {
 .put(url, JSON.stringify(composeProgram), {headers: headers})
 
 		.toPromise()
-		.then(() => composeProgram)
-               
-		.catch(this.handleError);
-  
+		.then(response => response.text())              
+		.catch(response => Promise.reject(new Error(response._body + ' ' + response.status + ' ' + response.statusText)));
 	}
 
 	private handleError(error: any) {
-    		console.error('An error occurred', error);
-    		return Promise.reject(error.message || error);
+		console.error(error.status + '+' + error.statusText);
+    		//return Promise.reject(error.message || error);
+		return Promise.reject(error);
   	} 
 
 }

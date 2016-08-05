@@ -14,14 +14,31 @@ require('rxjs/add/operator/toPromise');
 var ComposeProgramService = (function () {
     function ComposeProgramService(http) {
         this.http = http;
-        this.composeUrl = 'http://localhost:8080/compose'; // URL to web api
+        this.composeUrl = 'http://localhost:4000/compose'; // URL to web api
+        this.statusURL = this.composeUrl + '/status';
+        this.errorMessage = 'err';
     }
     ComposeProgramService.prototype.getProgram = function () {
-        //console.error('==============================');
         return this.http.get(this.composeUrl)
             .toPromise()
             .then(function (response) { return response.json(); })
             .catch(this.handleError);
+    };
+    ComposeProgramService.prototype.getProgramStatus = function () {
+        return this.http.get(this.statusURL)
+            .toPromise()
+            .then(function (response) { return response.text(); })
+            .catch(this.handleError);
+    };
+    ComposeProgramService.prototype.stopProgram = function () {
+        var headers = new http_1.Headers();
+        headers.append('Content-Type', 'application/json');
+        var url = "" + this.statusURL;
+        return this.http
+            .put(url, "azerty", { headers: headers })
+            .toPromise()
+            .then(function (response) { return response.text(); })
+            .catch(function (response) { return Promise.reject(new Error(response._body + ' ' + response.status + ' ' + response.statusText)); });
     };
     ComposeProgramService.prototype.saveProgram = function (composeProgram) {
         return this.put(composeProgram);
@@ -33,12 +50,13 @@ var ComposeProgramService = (function () {
         return this.http
             .put(url, JSON.stringify(composeProgram), { headers: headers })
             .toPromise()
-            .then(function () { return composeProgram; })
-            .catch(this.handleError);
+            .then(function (response) { return response.text(); })
+            .catch(function (response) { return Promise.reject(new Error(response._body + ' ' + response.status + ' ' + response.statusText)); });
     };
     ComposeProgramService.prototype.handleError = function (error) {
-        console.error('An error occurred', error);
-        return Promise.reject(error.message || error);
+        console.error(error.status + '+' + error.statusText);
+        //return Promise.reject(error.message || error);
+        return Promise.reject(error);
     };
     ComposeProgramService = __decorate([
         core_1.Injectable(), 
